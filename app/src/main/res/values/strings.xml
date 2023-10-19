@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">ItHealth</string>
+    <string name="Registration">Зарегистрироваться</string>
+    <string name="Autorization">Войти</string>
+    <string name="Programmer">Программист,</string>
+    <string name="Hi">привет!</string>
+    <string name="Introductory_text">Пора выйти из while и зациклиться на здоровье!</string>
+    <string name="Welcome">Добро пожаловать!</string>
+    <string name="Auth">Войди, чтобы продолжить</string>
+    <string name="lose">Ctr+S в голове не сработал, забыл пароль</string>
+</resources>
