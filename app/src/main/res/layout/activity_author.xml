@@ -40,7 +40,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editTextTextPassword"
+        android:id="@+id/email"
         android:layout_width="255dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -58,24 +58,25 @@
         app:layout_constraintTop_toBottomOf="@+id/textView6"
         app:layout_constraintVertical_bias="0.0"
         tools:ignore="SpeakableTextPresentCheck" />
+
     <EditText
-        android:id="@+id/editTextTextEmailAddress"
+        android:id="@+id/password"
         android:layout_width="255dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="50dp"
-        android:ems="10"
-        android:textColorHint="@color/green"
         android:backgroundTint="@color/green"
+        android:ems="10"
         android:gravity="center"
         android:hint="Пароль"
         android:inputType="textPassword"
         android:minHeight="48dp"
+        android:textColorHint="@color/green"
         app:layout_constraintBottom_toTopOf="@+id/authorization"
         app:layout_constraintEnd_toEndOf="parent"
+
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@+id/email"
+        app:layout_constraintVertical_bias="0.421"
         tools:ignore="SpeakableTextPresentCheck" />
 
     <TextView
