@@ -52,7 +52,6 @@ class ActivityMainMenu : AppCompatActivity(), SensorEventListener {
     private var previousTotalSteps = 0f
     private var water = 0
 
-
     var toDoList: MutableList<ToDoModel>? = null
     lateinit var adapter: ToDoAdapter
     private var listViewItem: ListView? = null
@@ -62,7 +61,7 @@ class ActivityMainMenu : AppCompatActivity(), SensorEventListener {
 var step:Int=0
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
-//проверки прмиженов
+//проверки разрешений
         if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACTIVITY_RECOGNITION

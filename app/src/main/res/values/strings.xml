@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">ItHealth</string>
     <string name="Registration">Зарегистрироваться</string>
+    <string name="Vetrify">Верификация</string>
+    <string name="ResetPass">Сброс пароля</string>
+    <string name="ProblemsAuth">Введите почту для сброса пароля</string>
     <string name="Autorization">Войти</string>
     <string name="Programmer">Программист,</string>
     <string name="Hi">привет!</string>

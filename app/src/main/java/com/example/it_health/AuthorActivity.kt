@@ -7,6 +7,7 @@ import android.view.WindowManager
 import android.widget.Toast
 import com.example.it_health.databinding.ActivityAuthorBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
 
 class AuthorActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAuthorBinding
@@ -25,11 +26,19 @@ class AuthorActivity : AppCompatActivity() {
 
         firebaseAuth = FirebaseAuth.getInstance()
 
-        //зарегистрировать аккаунт из авторизации
+
+        // переход  восстановлению пароля problemAuth
+        binding.problemAuth?.setOnClickListener {
+            val intent = Intent(this, ActivityProblemAuth::class.java)
+            startActivity(intent)
+           // val intent = Intent(this, ActivityProblemAuth::class.java)
+         //  startActivity(intent)
+
+        }
+
+        //возврат назад
         binding.imageButton?.setOnClickListener {
             onBackPressed()
-            //   val intent = Intent(this, AuthorActivity::class.java)
-            // startActivity(intent)
         }
 
         binding.authorization.setOnClickListener {
@@ -42,10 +51,15 @@ class AuthorActivity : AppCompatActivity() {
                 firebaseAuth.signInWithEmailAndPassword(email, pass)
                     .addOnCompleteListener() {
                         if (it.isSuccessful) {
+                            if (firebaseAuth.currentUser?.isEmailVerified == true) {
 
-
-                            val intent = Intent(this, ActivityMainMenu::class.java)
-                            startActivity(intent)
+                                val intent = Intent(this, ActivityMainMenu::class.java)
+                                startActivity(intent)
+                            }
+                            else{
+                                Toast.makeText(this, " Вы не подтвердили адресс электронной почты ", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
 
                         } else {
                             Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT)
