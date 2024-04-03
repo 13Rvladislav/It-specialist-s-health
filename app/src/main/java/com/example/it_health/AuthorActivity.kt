@@ -43,10 +43,10 @@ class AuthorActivity : AppCompatActivity() {
 
         binding.authorization.setOnClickListener {
 
-            val email = binding.email?.text.toString()
-            val pass = binding.password?.text.toString()
+            val email = binding.email.getEditText()?.getText().toString()
+            val pass = binding.password.getEditText()?.getText().toString()
 
-            if (email.isNotEmpty() && pass.isNotEmpty()) {
+            if (email!!.isNotEmpty() && pass!!.isNotEmpty()) {
 
                 firebaseAuth.signInWithEmailAndPassword(email, pass)
                     .addOnCompleteListener() {

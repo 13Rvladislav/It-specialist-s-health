@@ -32,51 +32,62 @@ class RegActivity : AppCompatActivity() {
             onBackPressed()
         }
         binding.BtnReg?.setOnClickListener {
-            val companyName = binding.name?.text.toString()
-            val email = binding.email?.text.toString()
-            val pass = binding.Password?.text.toString()
-            val confirmPass = binding.ConfirmPassword?.text.toString()
-            val user = Userss(
-                companyName
-            )
+
+            val email = binding.email.getEditText()?.getText().toString()
+            val pass = binding.Password.getEditText()?.getText().toString()
+            val confirmPass = binding.ConfirmPassword.getEditText()?.getText().toString()
+
 // TODO: написать обязательный ввод имени компании и сделать верификацию
             if (email.isNotEmpty() && pass.isNotEmpty() && confirmPass.isNotEmpty()) {
-                if (pass == confirmPass) {
-                    firebaseAuth.createUserWithEmailAndPassword(email, pass)
-                        .addOnCompleteListener() {
-                            if (it.isSuccessful) {
-                                FirebaseDatabase.getInstance().getReference("Users")
-                                    .child(FirebaseAuth.getInstance().currentUser!!.uid)
-                                    .setValue(user).addOnCompleteListener(OnCompleteListener<Void> {
-                                        val intent = Intent(this, AuthorActivity::class.java)
-                                        startActivity(intent)
-                                    })
+                if (pass.length > 6) {
+                    if (pass == confirmPass) {
+                        firebaseAuth.createUserWithEmailAndPassword(email, pass)
+                            .addOnCompleteListener() {
+                                if (it.isSuccessful) {
+                                    FirebaseDatabase.getInstance().getReference("Users")
+                                        .child(FirebaseAuth.getInstance().currentUser!!.uid)
+                                        .setValue("user-info")
+                                        .addOnCompleteListener(OnCompleteListener<Void> {
+                                            val intent = Intent(this, AuthorActivity::class.java)
+                                            startActivity(intent)
 
-                            } else {
-                                Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT)
-                                    .show()
-                            }
-                            firebaseAuth.currentUser?.sendEmailVerification()
-                                ?.addOnCompleteListener { emailTask ->
-                                    if (emailTask.isSuccessful) {
-                                        Toast.makeText(
-                                            this,
-                                            "Письмо для подтверждения успешно отправлено",
-                                            Toast.LENGTH_SHORT
-                                        )
-                                            .show()
-                                    } else {
-                                        Toast.makeText(
-                                            this,
-                                            "Письмо для подтверждения успешно отправлено",
-                                            Toast.LENGTH_SHORT
-                                        )
-                                            .show()
-                                    }
+                                        })
+
+                                } else {
+                                    Toast.makeText(
+                                        this,
+                                        it.exception.toString(),
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
                                 }
-                        }
+                                firebaseAuth.currentUser?.sendEmailVerification()
+                                    ?.addOnCompleteListener { emailTask ->
+                                        if (emailTask.isSuccessful) {
+                                            Toast.makeText(
+                                                this,
+                                                "Письмо для подтверждения успешно отправлено",
+                                                Toast.LENGTH_SHORT
+                                            )
+                                                .show()
+                                        } else {
+                                            Toast.makeText(
+                                                this,
+                                                "Письмо для подтверждения успешно отправлено",
+                                                Toast.LENGTH_SHORT
+                                            )
+                                                .show()
+                                        }
+                                    }
+                            }
+
+                    } else {
+                        Toast.makeText(this, "Пароли не совпадают", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(this, "Пароли не совпадают", Toast.LENGTH_SHORT).show(); }
+                    Toast.makeText(this, "Длина пароля меньше 6 символов", Toast.LENGTH_SHORT)
+                        .show()
+                }
             } else {
                 Toast.makeText(this, "Одно из полей не заполнено", Toast.LENGTH_SHORT).show();
             }

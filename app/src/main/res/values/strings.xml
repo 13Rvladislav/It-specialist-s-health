@@ -1,15 +1,16 @@
 <resources>
-    <string name="app_name">ItHealth</string>
-    <string name="Registration">Зарегистрироваться</string>
+    <string name="app_name">itHealth</string>
+    <string name="Registration"><u>Зарегистрироваться</u></string>
+    <string name="RegistrationBtn">Зарегистрироваться</string>
     <string name="Vetrify">Верификация</string>
     <string name="ResetPass">Сброс пароля</string>
     <string name="ProblemsAuth">Введите почту для сброса пароля</string>
     <string name="Autorization">Войти</string>
-    <string name="Programmer">Программист,</string>
+    <string name="Programmer">Программист, привет!</string>
     <string name="Hi">привет!</string>
     <string name="Create">Создай новый аккаунт!</string>
     <string name="Introductory_text">Пора выйти из while и зациклиться на здоровье!</string>
     <string name="Welcome">Добро пожаловать!</string>
     <string name="Auth">Войди, чтобы продолжить</string>
-    <string name="lose">Ctr+S в голове не сработал, забыл пароль</string>
+    <string name="lose">Ctr+S в голове не сработал, <u>восстановить пароль</u></string>
 </resources>

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -19,16 +20,16 @@ class MainActivity : AppCompatActivity() {
             //скрыть строку состояния
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN)
             //создание переменных кнопок
-        val RegBtn = findViewById<Button>(R.id.registration)
+        val RegBtn = findViewById<TextView>(R.id.RegBtn)
         val AuthBtn = findViewById<Button>(R.id.authorization)
         auth = FirebaseAuth.getInstance()
 
-        // Проверяем, авторизован ли пользователь
-        val currentUser = auth.currentUser
-        if (currentUser != null) {
-            // Пользователь уже авторизован, переходим на главный экран
-            startActivity(Intent(this, ActivityMainMenu::class.java))
-        } else {
+//        // Проверяем, авторизован ли пользователь
+//        val currentUser = auth.currentUser
+//        if (currentUser != null) {
+//            // Пользователь уже авторизован, переходим на главный экран
+//            startActivity(Intent(this, ActivityMainMenu::class.java))
+//        } else {
 
 
             //кнопка регистрации
@@ -46,4 +47,4 @@ class MainActivity : AppCompatActivity() {
 
 
     }
-}
+//}
