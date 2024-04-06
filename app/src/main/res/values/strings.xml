@@ -13,4 +13,6 @@
     <string name="Welcome">Добро пожаловать!</string>
     <string name="Auth">Войди, чтобы продолжить</string>
     <string name="lose">Ctr+S в голове не сработал, <u>восстановить пароль</u></string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -13,4 +13,5 @@
     <color name="greendarker">#305846</color>
     <color name="greenlighter">#7E9689</color>
     <color name="backcard"> #BAC9C3</color>
+    <color name="menu_color"> #92E3A9</color>
 </resources>

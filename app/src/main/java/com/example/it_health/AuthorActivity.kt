@@ -53,7 +53,7 @@ class AuthorActivity : AppCompatActivity() {
                         if (it.isSuccessful) {
                             if (firebaseAuth.currentUser?.isEmailVerified == true) {
 
-                                val intent = Intent(this, ActivityMainMenu::class.java)
+                                val intent = Intent(this, ActivityMenu::class.java)
                                 startActivity(intent)
                             }
                             else{

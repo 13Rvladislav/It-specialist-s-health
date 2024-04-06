@@ -16,6 +16,9 @@
         android:theme="@style/Theme.IT_health"
         tools:targetApi="31">
         <activity
+            android:name=".ActivityMenu"
+            android:exported="false" />
+        <activity
             android:name=".ActivityVerify"
             android:exported="false" />
         <activity
