@@ -24,12 +24,12 @@ class MainActivity : AppCompatActivity() {
         val AuthBtn = findViewById<Button>(R.id.authorization)
         auth = FirebaseAuth.getInstance()
 
-//        // Проверяем, авторизован ли пользователь
-//        val currentUser = auth.currentUser
-//        if (currentUser != null) {
-//            // Пользователь уже авторизован, переходим на главный экран
-//            startActivity(Intent(this, ActivityMainMenu::class.java))
-//        } else {
+        // Проверяем, авторизован ли пользователь
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            // Пользователь уже авторизован, переходим на главный экран
+            startActivity(Intent(this, ActivityMenu::class.java))
+        } else {
 
 
             //кнопка регистрации
@@ -47,4 +47,4 @@ class MainActivity : AppCompatActivity() {
 
 
     }
-//}
+}

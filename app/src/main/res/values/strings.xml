@@ -4,7 +4,7 @@
     <string name="RegistrationBtn">Зарегистрироваться</string>
     <string name="Vetrify">Верификация</string>
     <string name="ResetPass">Сброс пароля</string>
-    <string name="ProblemsAuth">Введите почту для сброса пароля</string>
+    <string name="ProblemsAuth">Введите ваш email для сброса пароля</string>
     <string name="Autorization">Войти</string>
     <string name="Programmer">Программист, привет!</string>
     <string name="Hi">привет!</string>
@@ -15,4 +15,5 @@
     <string name="lose">Ctr+S в голове не сработал, <u>восстановить пароль</u></string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="exit"><u>Выйти</u></string>
 </resources>

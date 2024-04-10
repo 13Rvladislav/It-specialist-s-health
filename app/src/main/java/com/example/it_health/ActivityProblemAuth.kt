@@ -30,7 +30,7 @@ class ActivityProblemAuth : AppCompatActivity() {
 
         //кнопка регистрации
         binding.ResetPassBtn.setOnClickListener() {
-            val email = binding.email?.text.toString()
+            val email = binding.email.getEditText()?.getText().toString()
             if (email.isNotEmpty() ) {
                 FirebaseAuth.getInstance().sendPasswordResetEmail(email)
                     .addOnCompleteListener { task ->
