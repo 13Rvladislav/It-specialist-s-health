@@ -95,7 +95,7 @@
             tools:ignore="SpeakableTextPresentCheck" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/change"
+            android:id="@+id/save"
             android:layout_width="140dp"
             android:layout_height="41dp"
             android:layout_gravity="center"

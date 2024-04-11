@@ -30,7 +30,6 @@ import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
-import java.util.*
 import kotlin.math.absoluteValue
 
 
@@ -205,7 +204,7 @@ var step:Int=0
             val cansel = dialog.findViewById(R.id.cansel) as ImageButton
             val text = dialog.findViewById(R.id.water_now) as TextView
             val btnstart = dialog.findViewById(R.id.start) as Button
-            val change = dialog.findViewById(R.id.change) as Button
+            val change = dialog.findViewById(R.id.save) as Button
             val edt = dialog.findViewById(R.id.email) as EditText
             dialog.show()
 

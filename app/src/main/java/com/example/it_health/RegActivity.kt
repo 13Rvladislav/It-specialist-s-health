@@ -12,7 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
 import com.google.firebase.ktx.Firebase
-import dbClases.Userss
+import dbClases.Users
 
 class RegActivity : AppCompatActivity() {
 
@@ -37,6 +37,21 @@ class RegActivity : AppCompatActivity() {
             val pass = binding.Password.getEditText()?.getText().toString()
             val confirmPass = binding.ConfirmPassword.getEditText()?.getText().toString()
 
+             var name: String ="Пользователь"
+             var height: String ="170"
+             var weight: String ="66"
+             var sex: String ="муж"
+             var workTime: String="8ч"
+             var lifeStyle: String ="Умеренный"
+
+            val user = Users(
+                name,
+                height,
+                weight,
+                sex,
+                workTime,
+                lifeStyle,
+                )
 // TODO: написать обязательный ввод имени компании и сделать верификацию
             if (email.isNotEmpty() && pass.isNotEmpty() && confirmPass.isNotEmpty()) {
                 if (pass.length > 6) {
@@ -46,7 +61,7 @@ class RegActivity : AppCompatActivity() {
                                 if (it.isSuccessful) {
                                     FirebaseDatabase.getInstance().getReference("Users")
                                         .child(FirebaseAuth.getInstance().currentUser!!.uid)
-                                        .setValue("user-info")
+                                        .child("User-info").setValue(user)
                                         .addOnCompleteListener(OnCompleteListener<Void> {
                                             val intent = Intent(this, AuthorActivity::class.java)
                                             startActivity(intent)
