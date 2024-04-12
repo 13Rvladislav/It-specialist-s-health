@@ -11,22 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageButton
-            android:id="@+id/imageButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_gravity="left"
-            android:layout_marginTop="48dp"
-            android:backgroundTint="@android:color/transparent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.065"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/ic_arrow_back"
-            tools:ignore="SpeakableTextPresentCheck" />
-
         <TextView
             android:id="@+id/textView"
             android:layout_width="218dp"
@@ -40,8 +24,7 @@
             android:textColor="@color/greendarker"
             android:textSize="32sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.26"
-            app:layout_constraintStart_toEndOf="@+id/imageButton"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
@@ -99,7 +82,7 @@
                     android:text="Продолжительность рабочего дня" />
 
                 <TextView
-                    android:id="@+id/textView25"
+                    android:id="@+id/textWorkTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -127,7 +110,7 @@
                     android:text="Образ жизни" />
 
                 <TextView
-                    android:id="@+id/textView27"
+                    android:id="@+id/textLifeStyle"
                     android:layout_width="96dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -165,7 +148,7 @@
             app:layout_constraintVertical_bias="0.126" />
 
         <TextView
-            android:id="@+id/textView10"
+            android:id="@+id/textHeight"
             android:layout_width="100dp"
             android:layout_height="45dp"
             android:layout_marginStart="10dp"
@@ -174,13 +157,13 @@
             android:gravity="center"
             android:text="170 см"
             app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
-            app:layout_constraintEnd_toStartOf="@+id/textView12"
+            app:layout_constraintEnd_toStartOf="@+id/textWeight"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textFIO"
             app:layout_constraintVertical_bias="0.20000000" />
 
         <TextView
-            android:id="@+id/textView12"
+            android:id="@+id/textWeight"
             android:layout_width="100dp"
             android:layout_height="45dp"
             android:layout_marginStart="10dp"
@@ -189,14 +172,14 @@
             android:gravity="center"
             android:text="50 кг"
             app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
-            app:layout_constraintEnd_toStartOf="@+id/textView15"
+            app:layout_constraintEnd_toStartOf="@+id/textSex"
             app:layout_constraintHorizontal_bias="0.846"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textFIO"
             app:layout_constraintVertical_bias="0.208" />
 
         <TextView
-            android:id="@+id/textView15"
+            android:id="@+id/textSex"
             android:layout_width="100dp"
             android:layout_height="45dp"
             android:layout_marginStart="10dp"
@@ -222,7 +205,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.171"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView10"
+            app:layout_constraintTop_toBottomOf="@+id/textHeight"
             app:layout_constraintVertical_bias="0.021" />
 
         <TextView
@@ -236,7 +219,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView12"
+            app:layout_constraintTop_toBottomOf="@+id/textWeight"
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
@@ -250,7 +233,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.833"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView15"
+            app:layout_constraintTop_toBottomOf="@+id/textSex"
             app:layout_constraintVertical_bias="0.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

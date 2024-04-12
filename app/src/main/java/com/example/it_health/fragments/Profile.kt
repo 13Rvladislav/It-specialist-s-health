@@ -1,7 +1,9 @@
 package com.example.it_health.fragments
 
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -13,6 +15,8 @@ import android.view.Window
 import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.it_health.MainActivity
 import com.example.it_health.R
@@ -45,6 +49,11 @@ class Profile : Fragment(R.layout.fragment_profile) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         auth = FirebaseAuth.getInstance()
+        val sharedPreferences =
+            requireContext().getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        changeProfileInfo(sharedPreferences, editor)
+
 
         //кнопка редактирования
         binding.reduct.setOnClickListener {
@@ -97,11 +106,42 @@ class Profile : Fragment(R.layout.fragment_profile) {
                         WorkTime,
                         LifeStyle,
                     )
+                    lateinit var waterNorm:String
+
+                    if (Sex == "Жен") {
+                        waterNorm=(Weight.toInt()*31).toString()
+                    } else {
+                        waterNorm=(Weight.toInt()*35).toString()
+                    }
                     //запись в FB
                     FirebaseDatabase.getInstance().getReference("Users")
                         .child(FirebaseAuth.getInstance().currentUser!!.uid).child("User-info")
                         .setValue(userInfo)
+
+                    FirebaseDatabase.getInstance().getReference("Users")
+                        .child(FirebaseAuth.getInstance().currentUser!!.uid).child("MainWorkInfo").child("waterNorm")
+                        .setValue(waterNorm)
+
+                    //перезапись sp
+                    editor.putString("height", Height.toString())
+                    editor.putString("lifeStyle", LifeStyle.toString())
+                    editor.putString("name", FIO.toString())
+                    editor.putString("sex", Sex.toString())
+                    editor.putString("weight", Weight.toString())
+                    editor.putString("workTime", WorkTime.toString())
+                    editor.putString("waterNorm", waterNorm.toString())
+                    editor.apply()
+//перезапись профиля
+                    changeProfileInfo(sharedPreferences, editor)
+                    Toast.makeText(requireActivity(), "Данные успешно изменены", Toast.LENGTH_LONG)
+                        .show()
+                    dialog.dismiss() // Закрытие диалогового окна
                 } else {
+                    Toast.makeText(
+                        requireActivity(),
+                        "Одно или несколько полей пусты",
+                        Toast.LENGTH_LONG
+                    ).show()
 
                 }
 
@@ -122,6 +162,21 @@ class Profile : Fragment(R.layout.fragment_profile) {
         }
     }
 
+    fun changeProfileInfo(sharedPreferences: SharedPreferences, editor: SharedPreferences.Editor) {
+
+        val savedName = sharedPreferences.getString("name", "")
+        val savedHeight = sharedPreferences.getString("height", "")
+        val savedWeight = sharedPreferences.getString("weight", "")
+        val savedSex = sharedPreferences.getString("sex", "")
+        val savedLifeStyle = sharedPreferences.getString("lifeStyle", "")
+        val savedWorkTime = sharedPreferences.getString("workTime", "")
+        binding.textFIO.setText(savedName)
+        binding.textHeight.setText(savedHeight)
+        binding.textWeight.setText(savedWeight)
+        binding.textSex.setText(savedSex)
+        binding.textLifeStyle.setText(savedLifeStyle)
+        binding.textWorkTime.setText(savedWorkTime)
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

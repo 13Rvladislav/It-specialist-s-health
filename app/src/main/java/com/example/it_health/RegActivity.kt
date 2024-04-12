@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
 import com.google.firebase.ktx.Firebase
+import dbClases.MainWorkInfo
 import dbClases.Users
 
 class RegActivity : AppCompatActivity() {
@@ -37,12 +38,24 @@ class RegActivity : AppCompatActivity() {
             val pass = binding.Password.getEditText()?.getText().toString()
             val confirmPass = binding.ConfirmPassword.getEditText()?.getText().toString()
 
-             var name: String ="Пользователь"
-             var height: String ="170"
-             var weight: String ="66"
-             var sex: String ="муж"
-             var workTime: String="8ч"
-             var lifeStyle: String ="Умеренный"
+            var name: String = "Пользователь"
+            var height: String = "170"
+            var weight: String = "66"
+            var sex: String = "муж"
+            var workTime: String = "8ч"
+            var lifeStyle: String = "Умеренный"
+
+            var water: String = "0"
+            var step: String = "0"
+            var sleep: String = "0"
+            var waterNorm: String = "0"
+
+            val mainInfo = MainWorkInfo(
+                water,
+                step,
+                sleep,
+                waterNorm,
+            )
 
             val user = Users(
                 name,
@@ -51,7 +64,7 @@ class RegActivity : AppCompatActivity() {
                 sex,
                 workTime,
                 lifeStyle,
-                )
+            )
 // TODO: написать обязательный ввод имени компании и сделать верификацию
             if (email.isNotEmpty() && pass.isNotEmpty() && confirmPass.isNotEmpty()) {
                 if (pass.length > 6) {
@@ -59,6 +72,11 @@ class RegActivity : AppCompatActivity() {
                         firebaseAuth.createUserWithEmailAndPassword(email, pass)
                             .addOnCompleteListener() {
                                 if (it.isSuccessful) {
+                                    FirebaseDatabase.getInstance().getReference("Users")
+                                        .child(FirebaseAuth.getInstance().currentUser!!.uid)
+                                        .child("MainWorkInfo").setValue(mainInfo)
+
+
                                     FirebaseDatabase.getInstance().getReference("Users")
                                         .child(FirebaseAuth.getInstance().currentUser!!.uid)
                                         .child("User-info").setValue(user)
