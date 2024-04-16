@@ -7,26 +7,20 @@ import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.it_health.MainActivity
 import com.example.it_health.R
 import com.example.it_health.databinding.FragmentProfileBinding
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import dbClases.Users
-import java.io.Console
 
 
 class Profile : Fragment(R.layout.fragment_profile) {
@@ -70,11 +64,11 @@ class Profile : Fragment(R.layout.fragment_profile) {
 
                 //ФИО
                 val FIO =
-                    dialog.findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.fio)
+                    dialog.findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.task)
                         .getEditText()?.getText().toString()
                 //РОСТ
                 val Height =
-                    dialog.findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.height)
+                    dialog.findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.date)
                         .getEditText()?.getText().toString()
                 //ВЕС
                 val Weight =

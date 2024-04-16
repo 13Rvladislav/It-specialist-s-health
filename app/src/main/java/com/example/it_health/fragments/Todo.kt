@@ -1,60 +1,170 @@
 package com.example.it_health.fragments
 
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.it_health.R
+import com.example.it_health.databinding.FragmentTodoBinding
+import com.example.it_health.utils.ToDoData
+import com.example.it_health.utils.TaskAdapter
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
+import com.google.firebase.ktx.Firebase
+import dbClases.ToDos
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [Todo.newInstance] factory method to
- * create an instance of this fragment.
- */
-class Todo : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+class Todo : Fragment(), TaskAdapter.TaskAdapterInterface {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var _binding: FragmentTodoBinding? = null
+
+    private val binding get() = _binding!!
+    private lateinit var database: DatabaseReference
+    private lateinit var auth: FirebaseAuth
+    private lateinit var authId: String
+    private val TAG = "HomeFragment"
+
+    private lateinit var taskAdapter: TaskAdapter
+    private lateinit var toDoItemList: MutableList<ToDoData>
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_todo, container, false)
+        _binding = FragmentTodoBinding.inflate(inflater, container, false)
+        val view = binding.root
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment Todo.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            Todo().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        auth = FirebaseAuth.getInstance()
+        init()
+        getTaskFromFirebase()
+
+        //кнопка редактирования
+        binding.addBtnHome.setOnClickListener {
+            val dialog = Dialog(requireContext())
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            dialog.setCancelable(false)
+            dialog.setContentView(R.layout.dialog_add_task)
+            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            dialog.show()
+
+
+            //сохранение
+            dialog.findViewById<View>(R.id.save).setOnClickListener {
+
+                //Задача
+                val task =
+                    dialog.findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.task)
+                        .getEditText()?.getText().toString()
+                //дата
+                val date =
+                    dialog.findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.date)
+                        .getEditText()?.getText().toString()
+                if (task.isNotEmpty() && date.isNotEmpty()) {
+//запись
+                    val todos = ToDos(
+                        task,
+                        date,
+                    )
+
+                    //запись в FB
+                    (FirebaseDatabase.getInstance().getReference("Users")
+                        .child(FirebaseAuth.getInstance().currentUser!!.uid)
+                        .child("Todo")).push().setValue(todos)
+
+                    Toast.makeText(requireActivity(), "Задача успешно добавлена", Toast.LENGTH_LONG)
+                        .show()
+
+                    dialog.dismiss() // Закрытие диалогового окна
+                } else {
+                    Toast.makeText(
+                        requireActivity(),
+                        "Одно или несколько полей пусты",
+                        Toast.LENGTH_LONG
+                    ).show()
+
                 }
+
             }
+            // Закрытие диалогового окна
+            dialog.findViewById<View>(R.id.cansel).setOnClickListener {
+                dialog.dismiss() // Закрытие диалогового окна
+            }
+        }
     }
+
+    private fun getTaskFromFirebase() {
+        database.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                toDoItemList.clear()
+                for (taskSnapshot in snapshot.children) {
+                    val todoTask =
+                        taskSnapshot.key?.let { ToDoData(it, taskSnapshot.child("nameTask").value.toString(),taskSnapshot.child("date").value.toString()) }
+
+                    if (todoTask != null) {
+                        toDoItemList.add(todoTask)
+                    }
+
+                }
+                Log.d(TAG, "onDataChange: " + toDoItemList)
+                taskAdapter.notifyDataSetChanged()
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show()
+            }
+
+
+        })
+    }
+
+
+    private fun init() {
+        database = FirebaseDatabase.getInstance().getReference("Users")
+            .child(FirebaseAuth.getInstance().currentUser!!.uid)
+            .child("Todo")
+
+
+
+        binding.mainRecyclerView.setHasFixedSize(true)
+        binding.mainRecyclerView.layoutManager = LinearLayoutManager(context)
+
+        toDoItemList = mutableListOf()
+        taskAdapter = TaskAdapter(toDoItemList)
+        taskAdapter.setListener(this)
+        binding.mainRecyclerView.adapter = taskAdapter
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    override fun onDeleteItemClicked(toDoData: ToDoData, position: Int) {
+        database.child(toDoData.taskId).removeValue().addOnCompleteListener {
+            if (it.isSuccessful) {
+                Toast.makeText(context, "Deleted Successfully", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, it.exception.toString(), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
 }
+

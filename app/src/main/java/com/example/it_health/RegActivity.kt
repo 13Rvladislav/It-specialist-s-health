@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import com.example.it_health.databinding.ActivityRegBinding
+import com.example.it_health.fragments.Todo
 
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
@@ -13,6 +14,7 @@ import com.google.firebase.database.FirebaseDatabase
 
 import com.google.firebase.ktx.Firebase
 import dbClases.MainWorkInfo
+import dbClases.ToDos
 import dbClases.Users
 
 class RegActivity : AppCompatActivity() {
@@ -50,6 +52,10 @@ class RegActivity : AppCompatActivity() {
             var sleep: String = "0"
             var waterNorm: String = "0"
 
+            var nameTask: String = "0"
+            var date: String = "0"
+
+
             val mainInfo = MainWorkInfo(
                 water,
                 step,
@@ -65,6 +71,11 @@ class RegActivity : AppCompatActivity() {
                 workTime,
                 lifeStyle,
             )
+            val todos = ToDos(
+                nameTask,
+                date,
+            )
+
 // TODO: написать обязательный ввод имени компании и сделать верификацию
             if (email.isNotEmpty() && pass.isNotEmpty() && confirmPass.isNotEmpty()) {
                 if (pass.length > 6) {
@@ -76,6 +87,9 @@ class RegActivity : AppCompatActivity() {
                                         .child(FirebaseAuth.getInstance().currentUser!!.uid)
                                         .child("MainWorkInfo").setValue(mainInfo)
 
+                                    (FirebaseDatabase.getInstance().getReference("Users")
+                                        .child(FirebaseAuth.getInstance().currentUser!!.uid)
+                                        .child("Todo")).push().setValue(todos)
 
                                     FirebaseDatabase.getInstance().getReference("Users")
                                         .child(FirebaseAuth.getInstance().currentUser!!.uid)

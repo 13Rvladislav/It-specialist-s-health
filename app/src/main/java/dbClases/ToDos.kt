@@ -1,19 +1,19 @@
 package dbClases
 
-class ToDo(
-    name: String,
+class ToDos(
+    nameTask: String,
     date: String
 ) {
 
-    private var name: String? = name
+    private var nameTask: String? = nameTask
     private var date: String? = date
 
-    fun setName(Name: String) {
-        this.name = Name
+    fun setNameTask(Name: String) {
+        this.nameTask = Name
     }
 
-    fun getName(): String? {
-        return name
+    fun getNameTask(): String? {
+        return nameTask
     }
 
     fun setDate(Date: String) {
