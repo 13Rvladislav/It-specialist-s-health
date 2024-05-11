@@ -18,6 +18,7 @@
         <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/drawable/profile_round_corner.xml" value="0.1" />
         <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/drawable/round_corner.xml" value="0.1" />
         <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout-normal/activity_main.xml" value="0.32222222222222224" />
+        <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout/5.xml" value="0.16944444444444445" />
         <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout/activity_author.xml" value="0.22" />
         <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout/activity_main.xml" value="0.32222222222222224" />
         <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout/activity_main_menu.xml" value="0.32222222222222224" />
@@ -25,12 +26,18 @@
         <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout/activity_problem_auth.xml" value="0.32222222222222224" />
         <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout/activity_profile.xml" value="0.5" />
         <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout/activity_reg.xml" value="0.25" />
-        <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout/activity_sport.xml" value="0.14635416666666667" />
+        <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout/activity_sport.xml" value="0.33" />
         <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout/activity_todo.xml" value="0.2" />
         <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout/dialog_add_task.xml" value="0.33" />
-        <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout/dialog_final.xml" value="0.67" />
+        <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout/dialog_final.xml" value="0.4837662337662338" />
         <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout/dialog_profile.xml" value="0.2" />
         <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout/dialog_sleep.xml" value="0.5" />
+        <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout/dialog_training_1.xml" value="0.33" />
+        <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout/dialog_training_2.xml" value="0.25" />
+        <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout/dialog_training_3.xml" value="0.25" />
+        <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout/dialog_training_4.xml" value="0.33" />
+        <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout/dialog_training_5.xml" value="0.16944444444444445" />
+        <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout/dialog_training_6.xml" value="0.33" />
         <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout/dialog_water.xml" value="0.5" />
         <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout/dialog_work.xml" value="0.5" />
         <entry key="..\:/Users/Vlad/Desktop/it health/app/src/main/res/layout/each_todo_item.xml" value="0.5" />
