@@ -2,6 +2,9 @@ package com.example.it_health
 
 import android.Manifest
 import android.app.Dialog
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -23,12 +26,19 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.example.it_health.databinding.ActivityMainMenuBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import java.text.DecimalFormat
 import java.text.NumberFormat
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.math.absoluteValue
 
@@ -57,56 +67,92 @@ class ActivityMainMenu : AppCompatActivity(), SensorEventListener {
     var timer: CountDownTimer? = null
     private lateinit var binding: ActivityMainMenuBinding
     var database = FirebaseDatabase.getInstance().reference
-var step:Int=0
+    var step: Int = 0
+
+
+    private val CHANNEL_ID = "channel_id"
+    private val notificationId = 101
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
-//проверки разрешений
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACTIVITY_RECOGNITION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            onStepCounterPermissionGranted()
-        } else {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
-                RQ_PERMISSION_FOR_STEPCOUNTER_CODE
-            )
-        }
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_menu)
         binding = ActivityMainMenuBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val sharedPreferences = getSharedPreferences("myPrefs", MODE_PRIVATE)
+        //получение данных пользователя из бд
+        readData()
+
+        val sharedPreferences =
+            getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
-        var savedwater = sharedPreferences.getInt("key2", 0)
+        val savedName = sharedPreferences.getString("name", "")
+        var savedwater = sharedPreferences.getInt("waterNow", 0)
         var savedsleep = sharedPreferences.getInt("key3", 0)
+        var workTime = sharedPreferences.getString("workTime", "")
+        previousTotalSteps = sharedPreferences.getFloat("key1", 0f)
+        binding.textViewSteps.setText("$previousTotalSteps")
+        binding.sleepcounter.text = savedsleep.toString()
+        binding.name.setText("Привет," + savedName + "!")
+        binding.watercounter.text = savedwater.toString()
+        notify(this)
+
+        //првоерка разрешений для шагомера
+        checkingPermissions()
+        //навигация
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNavigationView.selectedItemId = R.id.home
+        bottomNavigationView.setOnItemSelectedListener { menuItem ->
+
+            when (menuItem.itemId) {
+                R.id.home -> {
+                    //  overridePendingTransition(R.id.anim.slide_in_right,R.id.anim.left)
+                    true
+                }
+                R.id.sport -> {
+                    startActivity(Intent(this, ActivitySport::class.java))
+                    true
+                }
+                R.id.todo -> {
+                    startActivity(Intent(this, ActivityTodo::class.java))
+                    true
+                }
+                R.id.profile -> {
+                    startActivity(Intent(this, ActivityProfile::class.java))
+                    true
+                }
+                else -> false
+            }
+        }
+
+
+//проверки разрешений
 
 
         binding.watercounter.text = savedwater.toString()
         binding.sleepcounter.text = savedsleep.toString()
 
-// карточка вода
+        // карточка вода
         binding.cardWather.setOnClickListener {
             val dialog = Dialog(this)
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
             dialog.setCancelable(false)
             dialog.setContentView(R.layout.dialog_water)
             dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            dialog.show()
 
             val cansel = dialog.findViewById(R.id.cansel) as ImageButton
             val text = dialog.findViewById(R.id.water_now) as TextView
-            val edt = dialog.findViewById(R.id.email) as TextView
+            val edt = dialog.findViewById(R.id.email) as TextInputLayout
             val btn = dialog.findViewById(R.id.authorization) as TextView
 
-//память получение воды
+            //память получение воды
 
-            val sharedPreferences = getSharedPreferences("myPrefs", MODE_PRIVATE)
+            val sharedPreferences =
+                getSharedPreferences("myPrefs", AppCompatActivity.MODE_PRIVATE)
             val editor = sharedPreferences.edit()
-            var savedNumber = sharedPreferences.getInt("key2", 0)
-            text.text = savedNumber.toString() + "/3440".toString()
+            var savedNumber = sharedPreferences.getInt("waterNow", 0)
+            var normWater = sharedPreferences.getString("waterNorm", "")
+            text.text = savedNumber.toString() + "/".toString() + normWater.toString()
             //отоброжение диалогового
             dialog.show()
             //кнопка назад
@@ -117,29 +163,35 @@ var step:Int=0
             //кнопка добавить
             btn.setOnClickListener()
             {
-                val email = edt?.text.toString()
-                if (email.isNotEmpty()) {
-                    water = savedNumber.toInt() + email.toInt()
-                    text.text = water.toString() + "/3440".toString()
-                    editor.putInt("key2", water)
+                val edt = edt.getEditText()?.getText().toString()
+                if (edt.isNotEmpty()) {
+                    water = savedNumber.toInt() + edt.toInt()
+                    text.text = savedNumber.toString() + "/".toString() + normWater.toString()
+                    editor.putInt("waterNow", water)
                     editor.apply()
-                    savedNumber = sharedPreferences.getInt("key2", water)
+                    savedNumber = sharedPreferences.getInt("waterNow", water)
                     binding.watercounter.text = savedNumber.toString()
+                    dialog.cancel()
+                    Toast.makeText(
+                        this,
+                        "Водный баланс был успешно восполнен!",
+                        Toast.LENGTH_LONG
+                    ).show()
                 } else {
                     Toast.makeText(this, "Поле пустое", Toast.LENGTH_LONG).show()
                 }
             }
 
         }
-// карточка сна
+        // карточка сна
         binding.cardSleep.setOnClickListener() {
-            val sharedPreferences = getSharedPreferences("myPrefs", MODE_PRIVATE)
-            val editor = sharedPreferences.edit()
             val dialog = Dialog(this)
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
             dialog.setCancelable(false)
             dialog.setContentView(R.layout.dialog_sleep)
             dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            dialog.show()
+
 
             val cansel = dialog.findViewById(R.id.cansel) as ImageButton
             val text = dialog.findViewById(R.id.water_now) as TextView
@@ -156,12 +208,13 @@ var step:Int=0
             }
             //кнопка старт
             btnstart.setOnClickListener() {
+                Toast.makeText(this, "Начало сна", Toast.LENGTH_LONG).show()
                 date1 = LocalDateTime.now()
             }
             //кнопка конец
             btnend.setOnClickListener() {
                 date2 = LocalDateTime.now()
-
+                Toast.makeText(this, "Конец сна", Toast.LENGTH_LONG).show()
                 var diffSeconds = ChronoUnit.SECONDS.between(date1, date2).absoluteValue.toString()
                 lateinit var diffHours: String
                 lateinit var diffMinutes: String
@@ -186,15 +239,8 @@ var step:Int=0
 
 
         }
-
         //карточка рабочее время
         binding.cardw.setOnClickListener() {
-            val sharedPreferences = getSharedPreferences("myPrefs", MODE_PRIVATE)
-
-            val editor = sharedPreferences.edit()
-            var savedwater = sharedPreferences.getInt("key2", 0)
-
-
             val dialog = Dialog(this)
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
             dialog.setCancelable(false)
@@ -204,24 +250,8 @@ var step:Int=0
             val cansel = dialog.findViewById(R.id.cansel) as ImageButton
             val text = dialog.findViewById(R.id.water_now) as TextView
             val btnstart = dialog.findViewById(R.id.start) as Button
-            val change = dialog.findViewById(R.id.save) as Button
-            val edt = dialog.findViewById(R.id.email) as EditText
+            val change = dialog.findViewById(R.id.end) as Button
             dialog.show()
-
-
-            change.setOnClickListener()
-            {
-                val pass = edt?.text.toString()
-                editor.putLong("key4", pass.toLong() * 3600000)
-                editor.apply()
-                timer?.cancel()
-
-                if (pass.isNotEmpty() && pass.isNotEmpty()) {
-                } else {
-                    Toast.makeText(this, " поле не заполнено", Toast.LENGTH_SHORT).show()
-                }
-            }
-
 //кнопка назад
             cansel.setOnClickListener()
             {
@@ -230,6 +260,9 @@ var step:Int=0
             //кнопка старт
             btnstart.setOnClickListener()
             {
+                var timers = sharedPreferences.getString("workTime", "")!!.toLong()
+                editor.putLong("key4", timers * 3600000)
+                editor.apply()
                 var time = sharedPreferences.getLong("key4", 0)
 
                 timer = object : CountDownTimer(time, 1000) {
@@ -248,7 +281,8 @@ var step:Int=0
                             f.format(hour).toString() + ":" + f.format(min) + ":" + f.format(sec)
                         )
                         editor.putLong("key4", millisUntilFinished)
-
+                        if (min==0.toLong())
+                            sendNotification()
                         editor.apply()
                         binding.workcounter.setText(
                             f.format(hour)
@@ -259,13 +293,22 @@ var step:Int=0
                     // When the task is over it will print 00:00:00 there
                     override fun onFinish() {
                         text.setText("00:00:00")
+
                     }
                 }.start()
             }
+            change.setOnClickListener()
+            {
+
+                if (workTime != null) {
+                    editor.putLong("key4", workTime.toLong() * 3600000)
+                }
+                editor.apply()
+                timer?.cancel()
+
+            }
         }
-
-
-
+        //карточка итоги дня
         binding.cardW.setOnClickListener() {
 
 
@@ -281,7 +324,7 @@ var step:Int=0
             val text3 = dialog.findViewById(R.id.steps) as TextView
             val text4 = dialog.findViewById(R.id.water) as TextView
             val sharedPreferences = getSharedPreferences("myPrefs", MODE_PRIVATE)
-
+            var savedwater = sharedPreferences.getInt("waterNow", 0)
             val editor = sharedPreferences.edit()
             var savedwork = sharedPreferences.getString("key6", "")
 
@@ -310,13 +353,65 @@ var step:Int=0
 
         loadData()
         resetSteps()
+        realDate(this)
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
+        notify(this)
 
-        val view = binding.root
-        setContentView(view)
-        // Adding a context of SENSOR_SERVICE aas Sensor Manager
     }
 
+    //дата
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun realDate(context: Context) {
+        val sharedPref = context.getSharedPreferences("my_shared_pref", MODE_PRIVATE)
+        val savedDate = sharedPref.getString("savedDate", "")
+
+        val newDate = if (savedDate.isNullOrEmpty()) {
+            sharedPref.edit().putString("savedDate", "0000-00-00").apply()
+            "0000-00-00"
+        } else {
+            savedDate
+        }
+
+        val currentDate = LocalDate.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val formattedDate = currentDate.format(formatter)
+
+        if (newDate != formattedDate) {
+            sharedPref.edit().putString("savedDate", formattedDate).apply()
+            //обнуляю шагомер
+            val sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+            editor.putFloat("key1", previousTotalSteps)
+            editor.apply()
+        }
+    }
+
+    //уведомления
+    private fun notify(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Notification title"
+            val decriptionText = "Not"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = decriptionText
+            }
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun sendNotification() {
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle("Напоминание!")
+            .setContentText("Прошел рабочий час,прервитесь на перерыв!")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        with(NotificationManagerCompat.from(this))
+        {
+            notify(notificationId, builder.build())
+        }
+    }
 
     // проверка разрешений
     override fun onRequestPermissionsResult(
@@ -335,6 +430,23 @@ var step:Int=0
                     }
                 }
             }
+        }
+    }
+
+    //проверка даны ли разрешения
+    private fun checkingPermissions() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACTIVITY_RECOGNITION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            onStepCounterPermissionGranted()
+        } else {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
+                RQ_PERMISSION_FOR_STEPCOUNTER_CODE
+            )
         }
     }
 
@@ -377,15 +489,6 @@ var step:Int=0
 //        Not implemented yst
     }
 
-    override fun onSensorChanged(event: SensorEvent?) {
-        if (running) {
-            totalSteps = event!!.values[0]
-            val currentSteps = totalSteps.toInt() - previousTotalSteps.toInt()
-
-            binding.textViewSteps.text = ("$currentSteps")
-            step=currentSteps
-        }
-    }
 
     override fun onResume() {
         super.onResume()
@@ -401,6 +504,17 @@ var step:Int=0
 
     }
 
+    //шагомер логика
+    //изменение шагов
+    override fun onSensorChanged(event: SensorEvent?) {
+        if (running) {
+            totalSteps = event!!.values[0]
+            val currentSteps = totalSteps.toInt() - previousTotalSteps.toInt()
+
+            binding.textViewSteps.text = ("$currentSteps")
+            step = currentSteps
+        }
+    }
 
     // сброс шагов
     private fun resetSteps() {
@@ -415,6 +529,7 @@ var step:Int=0
         }
     }
 
+    //сохранение шагов
     private fun saveData() {
         val sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
@@ -422,13 +537,56 @@ var step:Int=0
         editor.apply()
     }
 
+    //получение шагов
     private fun loadData() {
         val sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+
         val savedNumber = sharedPreferences.getFloat("key1", 0f)
         Log.d("MainActivity", "$savedNumber")
         previousTotalSteps = savedNumber
     }
 
+    //пользовательские данные
+    private fun readData() {
+        val sharedPreferences = getSharedPreferences("myPrefs", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        binding = ActivityMainMenuBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        //получение информации о пользователе user-info
+        database = FirebaseDatabase.getInstance().getReference("Users")
+        database.child(FirebaseAuth.getInstance().currentUser!!.uid).child("User-info").get()
+            .addOnSuccessListener {
+                if (it.exists()) {
+                    val fio = it.child("name").value
+                    val lifeStyle = it.child("lifeStyle").value
+                    val height = it.child("height").value
+                    val weight = it.child("weight").value
+                    val sex = it.child("sex").value
+                    val workTime = it.child("workTime").value
+                    editor.putString("height", height.toString())
+                    editor.putString("lifeStyle", lifeStyle.toString())
+                    editor.putString("name", fio.toString())
+                    editor.putString("sex", sex.toString())
+                    editor.putString("weight", weight.toString())
+                    editor.putString("workTime", workTime.toString())
+
+                    editor.apply()
+
+                }
+
+                database = FirebaseDatabase.getInstance().getReference("Users")
+                database.child(FirebaseAuth.getInstance().currentUser!!.uid).child("MainWorkInfo")
+                    .get()
+                    .addOnSuccessListener {
+                        if (it.exists()) {
+                            val waterNorm = it.child("waterNorm").value
+                            editor.putString("waterNorm", waterNorm.toString())
+                            editor.apply()
+
+                        }
+                    }
+            }
+    }
 
 }
 

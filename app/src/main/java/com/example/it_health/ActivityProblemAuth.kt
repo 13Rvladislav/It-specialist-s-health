@@ -43,10 +43,6 @@ class ActivityProblemAuth : AppCompatActivity() {
                         }
                     }
             }
-
-
-
-
             val intent = Intent(this, AuthorActivity::class.java)
             startActivity(intent)
         }

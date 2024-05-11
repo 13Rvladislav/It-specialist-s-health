@@ -28,7 +28,8 @@ class MainActivity : AppCompatActivity() {
         val currentUser = auth.currentUser
         if (currentUser != null) {
             // Пользователь уже авторизован, переходим на главный экран
-            startActivity(Intent(this, ActivityMenu::class.java))
+            startActivity(Intent(this, ActivityMainMenu::class.java))
+
         } else {
 
 

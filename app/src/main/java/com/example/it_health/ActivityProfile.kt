@@ -1,4 +1,4 @@
-package com.example.it_health.fragments
+package com.example.it_health
 
 import android.app.Dialog
 import android.content.Context
@@ -6,52 +6,68 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.Window
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
-import com.example.it_health.MainActivity
-import com.example.it_health.R
-import com.example.it_health.databinding.FragmentProfileBinding
+import com.example.it_health.databinding.ActivityAuthorBinding
+import com.example.it_health.databinding.ActivityProfileBinding
+import com.example.it_health.fragments.Todo
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import dbClases.Users
 
+private lateinit var binding: ActivityProfileBinding
+private lateinit var auth: FirebaseAuth
 
-class Profile : Fragment(R.layout.fragment_profile) {
+class ActivityProfile : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_profile)
 
-    private var _binding: FragmentProfileBinding? = null
+        binding = ActivityProfileBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-    private val binding get() = _binding!!
-    private lateinit var auth: FirebaseAuth
-
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentProfileBinding.inflate(inflater, container, false)
-        val view = binding.root
-        return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         auth = FirebaseAuth.getInstance()
         val sharedPreferences =
-            requireContext().getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+            getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         changeProfileInfo(sharedPreferences, editor)
 
+        //навигация
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNavigationView.selectedItemId = R.id.profile
 
-        //кнопка редактирования
+        bottomNavigationView.setOnItemSelectedListener { menuItem ->
+
+            when (menuItem.itemId) {
+                R.id.home -> {
+                    startActivity(Intent(this, ActivityMainMenu::class.java))
+                    //  overridePendingTransition(R.id.anim.slide_in_right,R.id.anim.left)
+                    true
+                }
+                R.id.sport -> {
+                    startActivity(Intent(this, ActivitySport::class.java))
+                    true
+                }
+                R.id.todo -> {
+                    startActivity(Intent(this, ActivityTodo::class.java))
+                    true
+                }
+                R.id.profile -> {
+                    true
+                }
+                else -> false
+            }
+        }
+
+//кнопка редактирования
         binding.reduct.setOnClickListener {
-            val dialog = Dialog(requireContext())
+            val dialog = Dialog(this)
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
             dialog.setCancelable(false)
             dialog.setContentView(R.layout.dialog_profile)
@@ -128,12 +144,12 @@ class Profile : Fragment(R.layout.fragment_profile) {
                     editor.apply()
 //перезапись профиля
                     changeProfileInfo(sharedPreferences, editor)
-                    Toast.makeText(requireActivity(), "Данные успешно изменены", Toast.LENGTH_LONG)
+                    Toast.makeText(this, "Данные успешно изменены", Toast.LENGTH_LONG)
                         .show()
                     dialog.dismiss() // Закрытие диалогового окна
                 } else {
                     Toast.makeText(
-                        requireActivity(),
+                        this,
                         "Одно или несколько полей пусты",
                         Toast.LENGTH_LONG
                     ).show()
@@ -151,31 +167,26 @@ class Profile : Fragment(R.layout.fragment_profile) {
 
         //кнопка выхода
         binding.Exit.setOnClickListener {
-            val intent = Intent(activity, MainActivity::class.java)
+            val intent = Intent(this, MainActivity::class.java)
             FirebaseAuth.getInstance().signOut();
             startActivity(intent)
         }
+
     }
-
     fun changeProfileInfo(sharedPreferences: SharedPreferences, editor: SharedPreferences.Editor) {
-
         val savedName = sharedPreferences.getString("name", "")
         val savedHeight = sharedPreferences.getString("height", "")
         val savedWeight = sharedPreferences.getString("weight", "")
         val savedSex = sharedPreferences.getString("sex", "")
         val savedLifeStyle = sharedPreferences.getString("lifeStyle", "")
         val savedWorkTime = sharedPreferences.getString("workTime", "")
+
+        // Обновляем данные в элементах интерфейса
         binding.textFIO.setText(savedName)
         binding.textHeight.setText(savedHeight)
         binding.textWeight.setText(savedWeight)
         binding.textSex.setText(savedSex)
         binding.textLifeStyle.setText(savedLifeStyle)
-        binding.textWorkTime.setText(savedWorkTime +"ч")
+        binding.textWorkTime.setText(savedWorkTime + "ч")
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
 }

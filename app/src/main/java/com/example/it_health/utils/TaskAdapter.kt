@@ -4,13 +4,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.it_health.ActivityTodo
 import com.example.it_health.databinding.EachTodoItemBinding
 
 class TaskAdapter(private val list: MutableList<ToDoData>) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
     private  val TAG = "TaskAdapter"
     private var listener:TaskAdapterInterface? = null
-    fun setListener(listener:TaskAdapterInterface){
+    fun setListener(listener: ActivityTodo){
         this.listener = listener
     }
     class TaskViewHolder(val binding: EachTodoItemBinding) : RecyclerView.ViewHolder(binding.root)

@@ -16,6 +16,15 @@
         android:theme="@style/Theme.IT_health"
         tools:targetApi="31">
         <activity
+            android:name=".ActivityProfile"
+            android:exported="false" />
+        <activity
+            android:name=".ActivityTodo"
+            android:exported="false" />
+        <activity
+            android:name=".ActivitySport"
+            android:exported="false" />
+        <activity
             android:name=".ActivityMenu"
             android:exported="false" />
         <activity

@@ -1,58 +1,73 @@
-package com.example.it_health.fragments
+package com.example.it_health
 
 import android.app.Dialog
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.Window
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.it_health.R
-import com.example.it_health.databinding.FragmentTodoBinding
-import com.example.it_health.utils.ToDoData
+import com.example.it_health.databinding.ActivityTodoBinding
 import com.example.it_health.utils.TaskAdapter
+import com.example.it_health.utils.ToDoData
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import dbClases.ToDos
+private lateinit var binding: ActivityTodoBinding
+class ActivityTodo : AppCompatActivity(), TaskAdapter.TaskAdapterInterface {
 
-
-class Todo : Fragment(), TaskAdapter.TaskAdapterInterface {
-
-    private var _binding: FragmentTodoBinding? = null
-
-    private val binding get() = _binding!!
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
     private lateinit var authId: String
-    private val TAG = "HomeFragment"
+    private val TAG = "ActivityTodo"
 
     private lateinit var taskAdapter: TaskAdapter
     private lateinit var toDoItemList: MutableList<ToDoData>
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_todo)
+        binding = ActivityTodoBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentTodoBinding.inflate(inflater, container, false)
-        val view = binding.root
-        return view
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNavigationView.selectedItemId = R.id.todo
+
+        bottomNavigationView.setOnItemSelectedListener { menuItem ->
+
+            when (menuItem.itemId) {
+                R.id.home -> {
+                    startActivity(Intent(this, ActivityMainMenu::class.java))
+                    //  overridePendingTransition(R.id.anim.slide_in_right,R.id.anim.left)
+                    true
+                }
+                R.id.sport -> {
+                    startActivity(Intent(this, ActivitySport::class.java))
+                    true
+                }
+                R.id.todo -> {
+
+                    true
+                }
+                R.id.profile -> {
+                    startActivity(Intent(this, ActivityProfile::class.java))
+                    true
+                }
+                else -> false
+            }
+        }
         auth = FirebaseAuth.getInstance()
         init()
         getTaskFromFirebase()
-
         //кнопка редактирования
         binding.addBtnHome.setOnClickListener {
-            val dialog = Dialog(requireContext())
+            val dialog = Dialog(this)
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
             dialog.setCancelable(false)
             dialog.setContentView(R.layout.dialog_add_task)
@@ -83,13 +98,13 @@ class Todo : Fragment(), TaskAdapter.TaskAdapterInterface {
                         .child(FirebaseAuth.getInstance().currentUser!!.uid)
                         .child("Todo")).push().setValue(todos)
 
-                    Toast.makeText(requireActivity(), "Задача успешно добавлена", Toast.LENGTH_LONG)
+                    Toast.makeText(this, "Задача успешно добавлена", Toast.LENGTH_LONG)
                         .show()
 
                     dialog.dismiss() // Закрытие диалогового окна
                 } else {
                     Toast.makeText(
-                        requireActivity(),
+                        this,
                         "Одно или несколько полей пусты",
                         Toast.LENGTH_LONG
                     ).show()
@@ -102,8 +117,8 @@ class Todo : Fragment(), TaskAdapter.TaskAdapterInterface {
                 dialog.dismiss() // Закрытие диалогового окна
             }
         }
-    }
 
+    }
     private fun getTaskFromFirebase() {
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -124,14 +139,12 @@ class Todo : Fragment(), TaskAdapter.TaskAdapterInterface {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@ActivityTodo, error.toString(), Toast.LENGTH_SHORT).show()
             }
 
 
         })
     }
-
-
     private fun init() {
         database = FirebaseDatabase.getInstance().getReference("Users")
             .child(FirebaseAuth.getInstance().currentUser!!.uid)
@@ -140,30 +153,20 @@ class Todo : Fragment(), TaskAdapter.TaskAdapterInterface {
 
 
         binding.mainRecyclerView.setHasFixedSize(true)
-        binding.mainRecyclerView.layoutManager = LinearLayoutManager(context)
+        binding.mainRecyclerView.layoutManager = LinearLayoutManager(this@ActivityTodo)
 
         toDoItemList = mutableListOf()
         taskAdapter = TaskAdapter(toDoItemList)
-      //  taskAdapter.setListener(this)
+        taskAdapter.setListener(this@ActivityTodo)
         binding.mainRecyclerView.adapter = taskAdapter
     }
-
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
     override fun onDeleteItemClicked(toDoData: ToDoData, position: Int) {
         database.child(toDoData.taskId).removeValue().addOnCompleteListener {
             if (it.isSuccessful) {
-                Toast.makeText(context, "Deleted Successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Deleted Successfully", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(context, it.exception.toString(), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
             }
         }
     }
-
-
 }
-

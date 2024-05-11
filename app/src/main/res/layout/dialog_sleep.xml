@@ -14,85 +14,97 @@
 
         <TextView
             android:id="@+id/textView20"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="297dp"
+            android:layout_height="38dp"
             android:gravity="center"
-            android:text="Продолжительность вашего сна"
+            android:text="Продолжительность  сна"
             android:textColor="@color/green"
             android:textSize="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0.075"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.184">
+            app:layout_constraintVertical_bias="0.076">
 
         </TextView>
+
 
         <ImageButton
             android:id="@+id/cansel"
             android:layout_width="34dp"
             android:layout_height="24dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="50dp"
             android:backgroundTint="@android:color/transparent"
-            app:layout_constraintBottom_toTopOf="@+id/textView20"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.949"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0"
+            app:layout_constraintVertical_bias="0.116"
             app:srcCompat="@drawable/ic_baseline_close_24" />
-
 
         <TextView
             android:id="@+id/water_now"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="00:00"
-            android:textSize="25dp"
+            android:textSize="30dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.501"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView20"
-            app:layout_constraintVertical_bias="0.065" />
+            app:layout_constraintTop_toBottomOf="@+id/imageView15"
+            app:layout_constraintVertical_bias="0.088" />
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/start"
-            android:layout_width="140dp"
-            android:layout_height="41dp"
+            android:layout_width="33dp"
+            android:layout_height="33dp"
             android:layout_gravity="center"
-            android:layout_marginBottom="140dp"
-            android:background="@drawable/custom_btn"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="28dp"
+            android:background="@drawable/ic_start_sleep"
             android:fontFamily="@font/istokweb_bold"
             android:gravity="center"
-            android:text="Начало сна"
             android:textColor="@color/white"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.52"
+            app:layout_constraintHorizontal_bias="0.42"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/water_now"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintVertical_bias="0.441" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/end"
-            android:layout_width="140dp"
-            android:layout_height="41dp"
+            android:layout_width="33dp"
+            android:layout_height="33dp"
             android:layout_gravity="center"
-            android:layout_marginBottom="76dp"
-            android:background="@drawable/custom_btn"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="28dp"
+            android:background="@drawable/ic_stop_sleep"
             android:fontFamily="@font/istokweb_bold"
             android:gravity="center"
-            android:text="Окончание сна"
             android:textColor="@color/white"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.508"
-            app:layout_constraintStart_toStartOf="parent"
 
-            />
+            app:layout_constraintHorizontal_bias="0.58"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/water_now"
+            app:layout_constraintVertical_bias="0.441" />
+
+        <ImageView
+            android:id="@+id/imageView15"
+            android:layout_width="228dp"
+            android:layout_height="152dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView20"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/end_sleep" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
